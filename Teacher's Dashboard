@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCare - Tuition Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #2e59d9;
+            --text-dark: #5a5c69;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--secondary-color);
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-color) 0%, #224abe 100%);
+            min-height: 100vh;
+            transition: all var(--transition-speed);
+            position: fixed;
+            z-index: 1000;
+            width: 250px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 10px;
+            border-radius: 5px;
+            padding: 10px 15px;
+            transition: all var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link:hover::before, .sidebar .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: white;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            transition: all var(--transition-speed);
+        }
+        
+        .sidebar .nav-link:hover i {
+            transform: scale(1.1);
+        }
+        
+        .topbar {
+            height: 70px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: all var(--transition-speed);
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all var(--transition-speed);
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+        }
+        
+        .card-header {
+            background-color: var(--secondary-color);
+            border-bottom: 1px solid #e3e6f0;
+            transition: all var(--transition-speed);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all var(--transition-speed);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .admission-form {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.5s;
+        }
+        
+        .form-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .form-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+        
+        .dashboard-card {
+            transition: all var(--transition-speed);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem 0 rgba(58, 59, 69, 0.2);
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: 1;
+            transition: all var(--transition-speed);
+            opacity: 0;
+        }
+        
+        .dashboard-card:hover::before {
+            opacity: 1;
+        }
+        
+        .student-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transition: all var(--transition-speed);
+            cursor: pointer;
+        }
+        
+        .student-photo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+        }
+        
+        .badge {
+            transition: all var(--transition-speed);
+        }
+        
+        .section-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 20px;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .section-content.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .table-responsive {
+            overflow: hidden;
+            border-radius: 0.35rem;
+        }
+        
+        table {
+            transition: all var(--transition-speed);
+        }
+        
+        table tr {
+            transition: all var(--transition-speed);
+        }
+        
+        table tr:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown-menu {
+            animation: fadeInDown 0.3s;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+                position: fixed;
+                z-index: 1050;
+                transition: all 0.3s ease;
+            }
+            
+            .sidebar.toggled {
+                width: 250px;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+            
+            .topbar, .section-content {
+                margin-left: 0;
+                width: 100%;
+                transition: all 0.3s ease;
+            }
+            
+            .section-content {
+                padding: 15px;
+            }
+            
+            body.sidebar-toggled {
+                overflow: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Navigation -->
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading text-center py-4">
+                <h3 class="text-white"><i class="fas fa-graduation-cap"></i> EduCare</h3>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-fw fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#students" class="nav-link" data-section="students">
+                    <i class="fas fa-fw fa-users"></i> Students
+                </a>
+                <a href="#admissions" class="nav-link" data-section="admissions">
+                    <i class="fas fa-fw fa-user-plus"></i> Admissions
+                </a>
+                <a href="#classes" class="nav-link" data-section="classes">
+                    <i class="fas fa-fw fa-chalkboard"></i> Classes
+                </a>
+                <a href="#subjects" class="nav-link" data-section="subjects">
+                    <i class="fas fa-fw fa-book"></i> Subjects
+                </a>
+                <a href="#attendance" class="nav-link" data-section="attendance">
+                    <i class="fas fa-fw fa-calendar-check"></i> Attendance
+                </a>
+                <a href="#payments" class="nav-link" data-section="payments">
+                    <i class="fas fa-fw fa-rupee-sign"></i> Payments
+                </a>
+                <a href="#reports" class="nav-link" data-section="reports">
+                    <i class="fas fa-fw fa-chart-bar"></i> Reports
+                </a>
+                <a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fas fa-fw fa-cog"></i> Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-white topbar mb-4 static-top shadow">
+                <div class="container-fluid">
+                    <button class="btn btn-link d-md-none" id="sidebarToggle">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" 
+                               id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="rounded-circle me-2" src="https://via.placeholder.com/40" width="40" height="40">
+                                <span class="d-none d-lg-inline text-gray-600 small">Admin User</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" href="#" id="profileBtn"><i class="fas fa-user fa-sm fa-fw me-2"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="#" id="settingsBtn"><i class="fas fa-cogs fa-sm fa-fw me-2"></i> Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid px-4">
+                <!-- Dashboard Section -->
+                <div class="section-content active" id="dashboard-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="generateReportBtn">
+                            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+                        </a>
+                    </div>
+
+                    <!-- Cards Row -->
+                    <div class="row">
+                        <!-- Total Students -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2 dashboard-card">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Total Students</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">245</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Classes -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2 dashboard-card">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Active Classes</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-chalkboard fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Admissions -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2 dashboard-card">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Pending Admissions</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Revenue -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2 dashboard-card">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Monthly Revenue</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹1,25,000</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row">
+                        <!-- Attendance Chart -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Monthly Attendance Overview</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-area">
+                                        <canvas id="attendanceChart" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Admissions -->
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Recent Admissions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush">
+                                        <a href="#" class="list-group-item list-group-item-action view-student" data-id="ST001">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Rahul Sharma</h6>
+                                                <small>3 days ago</small>
+                                            </div>
+                                            <p class="mb-1">Class 10 - Science</p>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action view-student" data-id="ST002">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Priya Patel</h6>
+                                                <small>5 days ago</small>
+                                            </div>
+                                            <p class="mb-1">Class 12 - Commerce</p>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action view-student" data-id="ST003">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Amit Singh</h6>
+                                                <small>1 week ago</small>
+                                            </div>
+                                            <p class="mb-1">Class 9 - General</p>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action view-student" data-id="ST004">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Neha Gupta</h6>
+                                                <small>1 week ago</small>
+                                            </div>
+                                            <p class="mb-1">Class 11 - Science</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admissions Form Section -->
+                <div class="section-content" id="admissions-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Student Admission Form</h1>
+                    </div>
+                    
+                    <div class="card shadow mb-4 admission-form">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Fill Student Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <!-- Progress Bar -->
+                            <div class="mb-4">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 25%;" 
+                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <small>Personal Details</small>
+                                    <small>Education Details</small>
+                                    <small>Parent Details</small>
+                                    <small>Payment</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Form Sections -->
+                            <form id="admissionForm">
+                                <!-- Section 1: Personal Details -->
+                                <div class="form-section active" id="section1">
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="text-center mb-3">
+                                                <img src="https://via.placeholder.com/150" alt="Student Photo" class="student-photo mb-2">
+                                                <input type="file" id="studentPhoto" class="d-none" accept="image/*">
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="document.getElementById('studentPhoto').click()">
+                                                    <i class="fas fa-camera"></i> Upload Photo
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="admissionDate">Admission Date</label>
+                                                <input type="date" class="form-control" id="admissionDate" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="firstName">First Name</label>
+                                                <input type="text" class="form-control" id="firstName" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="middleName">Middle Name</label>
+                                                <input type="text" class="form-control" id="middleName">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="lastName">Last Name</label>
+                                                <input type="text" class="form-control" id="lastName" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="dob">Date of Birth</label>
+                                                <input type="date" class="form-control" id="dob" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="gender">Gender</label>
+                                                <select class="form-control" id="gender" required>
+                                                    <option value="">Select Gender</option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" class="form-control" id="email">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="phone">Phone Number</label>
+                                                <input type="tel" class="form-control" id="phone" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <textarea class="form-control" id="address" rows="3" required></textarea>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-end mt-4">
+                                        <button type="button" class="btn btn-primary next-btn" data-next="section2">Next <i class="fas fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section 2: Education Details -->
+                                <div class="form-section" id="section2">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="currentSchool">Current School/College</label>
+                                                <input type="text" class="form-control" id="currentSchool">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="currentClass">Current Class/Grade</label>
+                                                <input type="text" class="form-control" id="currentClass" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="board">Board</label>
+                                                <select class="form-control" id="board">
+                                                    <option value="">Select Board</option>
+                                                    <option value="CBSE">CBSE</option>
+                                                    <option value="ICSE">ICSE</option>
+                                                    <option value="State Board">State Board</option>
+                                                    <option value="IB">IB</option>
+                                                    <option value="IGCSE">IGCSE</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="medium">Medium</label>
+                                                <select class="form-control" id="medium">
+                                                    <option value="">Select Medium</option>
+                                                    <option value="English">English</option>
+                                                    <option value="Hindi">Hindi</option>
+                                                    <option value="Regional">Regional</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4 mb-3">Subjects Selection</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="maths" value="Mathematics">
+                                                <label class="form-check-label" for="maths">Mathematics</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="physics" value="Physics">
+                                                <label class="form-check-label" for="physics">Physics</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="chemistry" value="Chemistry">
+                                                <label class="form-check-label" for="chemistry">Chemistry</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="biology" value="Biology">
+                                                <label class="form-check-label" for="biology">Biology</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="english" value="English">
+                                                <label class="form-check-label" for="english">English</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="computer" value="Computer Science">
+                                                <label class="form-check-label" for="computer">Computer Science</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-secondary prev-btn" data-prev="section1"><i class="fas fa-arrow-left"></i> Previous</button>
+                                        <button type="button" class="btn btn-primary next-btn" data-next="section3">Next <i class="fas fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section 3: Parent Details -->
+                                <div class="form-section" id="section3">
+                                    <h5 class="mb-4">Father's Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="fatherName">Full Name</label>
+                                                <input type="text" class="form-control" id="fatherName" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="fatherOccupation">Occupation</label>
+                                                <input type="text" class="form-control" id="fatherOccupation">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="fatherPhone">Phone Number</label>
+                                                <input type="tel" class="form-control" id="fatherPhone" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-4 mb-4">Mother's Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="motherName">Full Name</label>
+                                                <input type="text" class="form-control" id="motherName" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="motherOccupation">Occupation</label>
+                                                <input type="text" class="form-control" id="motherOccupation">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="motherPhone">Phone Number</label>
+                                                <input type="tel" class="form-control" id="motherPhone">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-secondary prev-btn" data-prev="section2"><i class="fas fa-arrow-left"></i> Previous</button>
+                                        <button type="button" class="btn btn-primary next-btn" data-next="section4">Next <i class="fas fa-arrow-right"></i></button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Section 4: Payment Details -->
+                                <div class="form-section" id="section4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="course">Select Course</label>
+                                                <select class="form-control" id="course" required>
+                                                    <option value="">Select Course</option>
+                                                    <option value="Regular">Regular (₹3000/month)</option>
+                                                    <option value="Crash">Crash Course (₹5000/month)</option>
+                                                    <option value="Weekend">Weekend (₹2000/month)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="batch">Select Batch</label>
+                                                <select class="form-control" id="batch" required>
+                                                    <option value="">Select Batch</option>
+                                                    <option value="Morning">Morning (7-9 AM)</option>
+                                                    <option value="Afternoon">Afternoon (2-4 PM)</option>
+                                                    <option value="Evening">Evening (5-7 PM)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="paymentMethod">Payment Method</label>
+                                                <select class="form-control" id="paymentMethod" required>
+                                                    <option value="">Select Payment Method</option>
+                                                    <option value="Cash">Cash</option>
+                                                    <option value="Online">Online Payment</option>
+                                                    <option value="Cheque">Cheque</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="amount">Amount (₹)</label>
+                                                <input type="number" class="form-control" id="amount" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group mt-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="terms" required>
+                                            <label class="form-check-label" for="terms">
+                                                I agree to the terms and conditions
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mt-4">
+                                        <button type="button" class="btn btn-secondary prev-btn" data-prev="section3"><i class="fas fa-arrow-left"></i> Previous</button>
+                                        <button type="submit" class="btn btn-success">Submit Admission</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Section -->
+                <div class="section-content" id="students-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Students Management</h1>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addStudentBtn">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add Student
+                        </button>
+                    </div>
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">All Students</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item export-btn" href="#" data-type="excel"><i class="fas fa-file-excel me-2"></i>Export to Excel</a></li>
+                                    <li><a class="dropdown-item export-btn" href="#" data-type="pdf"><i class="fas fa-file-pdf me-2"></i>Export to PDF</a></li>
+                                    <li><a class="dropdown-item print-btn" href="#"><i class="fas fa-print me-2"></i>Print List</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="studentsTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Photo</th>
+                                            <th>Name</th>
+                                            <th>Class</th>
+                                            <th>Subjects</th>
+                                            <th>Batch</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>ST001</td>
+                                            <td><img src="https://via.placeholder.com/40" class="rounded-circle" width="40" height="40"></td>
+                                            <td>Rahul Sharma</td>
+                                            <td>10</td>
+                                            <td>Maths, Science</td>
+                                            <td>Morning</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-btn" data-id="ST001"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-btn" data-id="ST001"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger delete-btn" data-id="ST001"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ST002</td>
+                                            <td><img src="https://via.placeholder.com/40" class="rounded-circle" width="40" height="40"></td>
+                                            <td>Priya Patel</td>
+                                            <td>12</td>
+                                            <td>Commerce, Accounts</td>
+                                            <td>Evening</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-btn" data-id="ST002"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-btn" data-id="ST002"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger delete-btn" data-id="ST002"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>ST003</td>
+                                            <td><img src="https://via.placeholder.com/40" class="rounded-circle" width="40" height="40"></td>
+                                            <td>Amit Singh</td>
+                                            <td>9</td>
+                                            <td>All Subjects</td>
+                                            <td>Afternoon</td>
+                                            <td><span class="badge bg-warning">Pending</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-btn" data-id="ST003"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-btn" data-id="ST003"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-danger delete-btn" data-id="ST003"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Classes Section -->
+                <div class="section-content" id="classes-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Classes Management</h1>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addClassBtn">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add Class
+                        </button>
+                    </div>
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">All Classes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="classesTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Class ID</th>
+                                            <th>Class Name</th>
+                                            <th>Subjects</th>
+                                            <th>Teacher</th>
+                                            <th>Schedule</th>
+                                            <th>Students</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>CL001</td>
+                                            <td>Class 10 - Science</td>
+                                            <td>Maths, Physics, Chemistry</td>
+                                            <td>Mr. Sharma</td>
+                                            <td>Mon-Fri, 8-10 AM</td>
+                                            <td>25</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-class-btn" data-id="CL001"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-class-btn" data-id="CL001"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>CL002</td>
+                                            <td>Class 12 - Commerce</td>
+                                            <td>Accounts, Economics, Business</td>
+                                            <td>Ms. Patel</td>
+                                            <td>Mon-Fri, 4-6 PM</td>
+                                            <td>18</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-class-btn" data-id="CL002"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-class-btn" data-id="CL002"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subjects Section -->
+                <div class="section-content" id="subjects-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Subjects Management</h1>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addSubjectBtn">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add Subject
+                        </button>
+                    </div>
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">All Subjects</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="subjectsTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject ID</th>
+                                            <th>Subject Name</th>
+                                            <th>Classes Offered</th>
+                                            <th>Teachers</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>SUB001</td>
+                                            <td>Mathematics</td>
+                                            <td>9, 10, 11, 12</td>
+                                            <td>Mr. Sharma, Mr. Gupta</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-subject-btn" data-id="SUB001"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-subject-btn" data-id="SUB001"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>SUB002</td>
+                                            <td>Physics</td>
+                                            <td>10, 11, 12</td>
+                                            <td>Mr. Verma</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-subject-btn" data-id="SUB002"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-subject-btn" data-id="SUB002"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div class="section-content" id="attendance-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Attendance Management</h1>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="markAttendanceBtn">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Mark Attendance
+                        </button>
+                    </div>
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Today's Attendance</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item export-btn" href="#" data-type="excel"><i class="fas fa-file-excel me-2"></i>Export to Excel</a></li>
+                                    <li><a class="dropdown-item print-btn" href="#"><i class="fas fa-print me-2"></i>Print Report</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="attendanceTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Class</th>
+                                            <th>Present</th>
+                                            <th>Absent</th>
+                                            <th>Percentage</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>2023-06-15</td>
+                                            <td>Class 10 - Science</td>
+                                            <td>22</td>
+                                            <td>3</td>
+                                            <td>88%</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-attendance-btn" data-id="ATT001"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-attendance-btn" data-id="ATT001"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2023-06-15</td>
+                                            <td>Class 12 - Commerce</td>
+                                            <td>18</td>
+                                            <td>0</td>
+                                            <td>100%</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-attendance-btn" data-id="ATT002"><i class="fas fa-eye"></i></button>
+                                                <button class="btn btn-sm btn-info edit-attendance-btn" data-id="ATT002"><i class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments Section -->
+                <div class="section-content" id="payments-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Payments Management</h1>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="addPaymentBtn">
+                            <i class="fas fa-plus fa-sm text-white-50"></i> Add Payment
+                        </button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Recent Payments</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="paymentsTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Payment ID</th>
+                                                    <th>Student</th>
+                                                    <th>Amount</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>PAY001</td>
+                                                    <td>Rahul Sharma</td>
+                                                    <td>₹3,000</td>
+                                                    <td>2023-06-10</td>
+                                                    <td><span class="badge bg-success">Paid</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary view-payment-btn" data-id="PAY001"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-sm btn-info edit-payment-btn" data-id="PAY001"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-sm btn-danger delete-payment-btn" data-id="PAY001"><i class="fas fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>PAY002</td>
+                                                    <td>Priya Patel</td>
+                                                    <td>₹5,000</td>
+                                                    <td>2023-06-12</td>
+                                                    <td><span class="badge bg-success">Paid</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary view-payment-btn" data-id="PAY002"><i class="fas fa-eye"></i></button>
+                                                        <button class="btn btn-sm btn-info edit-payment-btn" data-id="PAY002"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-sm btn-danger delete-payment-btn" data-id="PAY002"><i class="fas fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Payment Statistics</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2">
+                                        <canvas id="paymentChart" height="300"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-primary"></i> Paid
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-success"></i> Pending
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-info"></i> Overdue
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="section-content" id="reports-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Reports</h1>
+                        <div>
+                            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm me-2" id="generateReportBtn">
+                                <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+                            </button>
+                            <button class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" id="printReportBtn">
+                                <i class="fas fa-print fa-sm text-white-50"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Student Performance</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-bar">
+                                        <canvas id="performanceChart" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Report</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-bar">
+                                        <canvas id="revenueChart" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Custom Report Generator</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="customReportForm">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Report Type</label>
+                                            <select class="form-control" id="reportType">
+                                                <option>Student Report</option>
+                                                <option>Attendance Report</option>
+                                                <option>Payment Report</option>
+                                                <option>Performance Report</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>From Date</label>
+                                            <input type="date" class="form-control" id="fromDate">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>To Date</label>
+                                            <input type="date" class="form-control" id="toDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="section-content" id="settings-section">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">System Settings</h1>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Institute Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="instituteForm">
+                                        <div class="form-group">
+                                            <label>Institute Name</label>
+                                            <input type="text" class="form-control" id="instituteName" value="EduCare Tuition Center">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <textarea class="form-control" id="instituteAddress" rows="3">123 Education Street, Learning City</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Phone Number</label>
+                                            <input type="text" class="form-control" id="institutePhone" value="+91 9876543210">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="email" class="form-control" id="instituteEmail" value="info@educare.com">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">System Configuration</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form id="systemConfigForm">
+                                        <div class="form-group">
+                                            <label>Academic Year</label>
+                                            <select class="form-control" id="academicYear">
+                                                <option>2023-2024</option>
+                                                <option>2022-2023</option>
+                                                <option>2021-2022</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Time Zone</label>
+                                            <select class="form-control" id="timeZone">
+                                                <option>Asia/Kolkata (IST)</option>
+                                                <option>UTC</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Date Format</label>
+                                            <select class="form-control" id="dateFormat">
+                                                <option>DD/MM/YYYY</option>
+                                                <option>MM/DD/YYYY</option>
+                                                <option>YYYY-MM-DD</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-check mt-3">
+                                            <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                            <label class="form-check-label" for="emailNotifications">
+                                                Enable Email Notifications
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-3">Save Configuration</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 bg-danger text-white">
+                                    <h6 class="m-0 font-weight-bold">Danger Zone</h6>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-outline-danger" id="resetDataBtn">Reset All Data</button>
+                                    <button class="btn btn-danger mt-2" id="deleteAccountBtn">Delete Account</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>Copyright © EduCare 2023</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Student form would appear here</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Student Modal -->
+    <div class="modal fade" id="viewStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="studentDetailsContent">
+                    <!-- Student details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalTitle">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmationModalBody">
+                    Are you sure you want to perform this action?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Main Application Module
+        const EduCareApp = (function() {
+            // Private variables
+            let currentSection = 1;
+            const totalSections = 4;
+            let attendanceChart = null;
+            let paymentChart = null;
+            let performanceChart = null;
+            let revenueChart = null;
+            let currentAction = null;
+            let currentItemId = null;
+            
+            // DOM Elements
+            const elements = {
+                sidebarToggle: document.getElementById('sidebarToggle'),
+                sidebarWrapper: document.getElementById('sidebar-wrapper'),
+                navLinks: document.querySelectorAll('.nav-link'),
+                sectionContents: document.querySelectorAll('.section-content'),
+                nextButtons: document.querySelectorAll('.next-btn'),
+                prevButtons: document.querySelectorAll('.prev-btn'),
+                admissionForm: document.getElementById('admissionForm'),
+                studentPhotoInput: document.getElementById('studentPhoto'),
+                studentPhotoPreview: document.querySelector('.student-photo'),
+                addStudentBtn: document.getElementById('addStudentBtn'),
+                addClassBtn: document.getElementById('addClassBtn'),
+                addSubjectBtn: document.getElementById('addSubjectBtn'),
+                markAttendanceBtn: document.getElementById('markAttendanceBtn'),
+                addPaymentBtn: document.getElementById('addPaymentBtn'),
+                generateReportBtn: document.getElementById('generateReportBtn'),
+                printReportBtn: document.getElementById('printReportBtn'),
+                profileBtn: document.getElementById('profileBtn'),
+                settingsBtn: document.getElementById('settingsBtn'),
+                logoutBtn: document.getElementById('logoutBtn'),
+                resetDataBtn: document.getElementById('resetDataBtn'),
+                deleteAccountBtn: document.getElementById('deleteAccountBtn'),
+                customReportForm: document.getElementById('customReportForm'),
+                instituteForm: document.getElementById('instituteForm'),
+                systemConfigForm: document.getElementById('systemConfigForm'),
+                viewButtons: document.querySelectorAll('.view-btn, .view-student, .view-class-btn, .view-subject-btn, .view-attendance-btn, .view-payment-btn'),
+                editButtons: document.querySelectorAll('.edit-btn, .edit-class-btn, .edit-subject-btn, .edit-attendance-btn, .edit-payment-btn'),
+                deleteButtons: document.querySelectorAll('.delete-btn, .delete-payment-btn'),
+                exportButtons: document.querySelectorAll('.export-btn'),
+                printButtons: document.querySelectorAll('.print-btn'),
+                addStudentModal: new bootstrap.Modal(document.getElementById('addStudentModal')),
+                viewStudentModal: new bootstrap.Modal(document.getElementById('viewStudentModal')),
+                confirmationModal: new bootstrap.Modal(document.getElementById('confirmationModal')),
+                confirmActionBtn: document.getElementById('confirmActionBtn')
+            };
+            
+            // Initialize the application
+            function init() {
+                checkSidebarState();
+                setupEventListeners();
+                initAttendanceChart();
+                initPaymentChart();
+                initPerformanceChart();
+                initRevenueChart();
+                showSection('dashboard');
+            }
+            
+            // Check saved sidebar state
+            function checkSidebarState() {
+                const savedState = localStorage.getItem('sidebarState');
+                if (window.innerWidth > 768) {
+                    // Always show sidebar on desktop
+                    elements.sidebarWrapper.classList.add('toggled');
+                } else {
+                    // Apply saved state on mobile
+                    if (savedState === 'open') {
+                        elements.sidebarWrapper.classList.add('toggled');
+                    }
+                }
+            }
+            
+            // Set up event listeners
+            function setupEventListeners() {
+                // Sidebar toggle
+                elements.sidebarToggle.addEventListener('click', toggleSidebar);
+                
+                // Navigation links
+                elements.navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const sectionId = this.getAttribute('data-section');
+                        showSection(sectionId);
+                        setActiveNavLink(this);
+                        
+                        // Close sidebar on mobile after navigation
+                        if (window.innerWidth <= 768) {
+                            elements.sidebarWrapper.classList.remove('toggled');
+                            localStorage.setItem('sidebarState', 'closed');
+                        }
+                    });
+                });
+                
+                // Form navigation
+                elements.nextButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const nextSection = this.getAttribute('data-next');
+                        navigateForm(nextSection);
+                    });
+                });
+                
+                elements.prevButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const prevSection = this.getAttribute('data-prev');
+                        navigateForm(prevSection);
+                    });
+                });
+                
+                // Form submission
+                elements.admissionForm.addEventListener('submit', submitAdmissionForm);
+                
+                // Student photo upload
+                elements.studentPhotoInput.addEventListener('change', handlePhotoUpload);
+                
+                // Add buttons
+                elements.addStudentBtn.addEventListener('click', () => {
+                    showSection('admissions');
+                });
+                
+                elements.addClassBtn.addEventListener('click', () => {
+                    showAlert('Add Class functionality will be implemented here', 'info');
+                });
+                
+                elements.addSubjectBtn.addEventListener('click', () => {
+                    showAlert('Add Subject functionality will be implemented here', 'info');
+                });
+                
+                elements.markAttendanceBtn.addEventListener('click', () => {
+                    showAlert('Mark Attendance functionality will be implemented here', 'info');
+                });
+                
+                elements.addPaymentBtn.addEventListener('click', () => {
+                    showAlert('Add Payment functionality will be implemented here', 'info');
+                });
+                
+                // Report buttons
+                elements.generateReportBtn.addEventListener('click', () => {
+                    showAlert('Generate Report functionality will be implemented here', 'info');
+                });
+                
+                elements.printReportBtn.addEventListener('click', () => {
+                    showAlert('Print Report functionality will be implemented here', 'info');
+                });
+                
+                // Profile buttons
+                elements.profileBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showAlert('Profile functionality will be implemented here', 'info');
+                });
+                
+                elements.settingsBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSection('settings');
+                });
+                
+                elements.logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showConfirmation('Logout', 'Are you sure you want to logout?', () => {
+                        showAlert('You have been logged out successfully', 'success');
+                    });
+                });
+                
+                // Danger zone buttons
+                elements.resetDataBtn.addEventListener('click', () => {
+                    showConfirmation('Reset Data', 'Are you sure you want to reset all data? This action cannot be undone.', () => {
+                        showAlert('All data has been reset successfully', 'success');
+                    });
+                });
+                
+                elements.deleteAccountBtn.addEventListener('click', () => {
+                    showConfirmation('Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', () => {
+                        showAlert('Your account has been deleted successfully', 'success');
+                    });
+                });
+                
+                // View buttons
+                elements.viewButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        viewItem(this.classList.contains('view-student') ? 'student' : 
+                              this.classList.contains('view-class-btn') ? 'class' :
+                              this.classList.contains('view-subject-btn') ? 'subject' :
+                              this.classList.contains('view-attendance-btn') ? 'attendance' : 'payment', id);
+                    });
+                });
+                
+                // Edit buttons
+                elements.editButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editItem(this.classList.contains('edit-btn') ? 'student' : 
+                               this.classList.contains('edit-class-btn') ? 'class' :
+                               this.classList.contains('edit-subject-btn') ? 'subject' :
+                               this.classList.contains('edit-attendance-btn') ? 'attendance' : 'payment', id);
+                    });
+                });
+                
+                // Delete buttons
+                elements.deleteButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteItem(this.classList.contains('delete-btn') ? 'student' : 'payment', id);
+                    });
+                });
+                
+                // Export buttons
+                elements.exportButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const type = this.getAttribute('data-type');
+                        exportData(type);
+                    });
+                });
+                
+                // Print buttons
+                elements.printButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        printData();
+                    });
+                });
+                
+                // Form submissions
+                elements.customReportForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    generateCustomReport();
+                });
+                
+                elements.instituteForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveInstituteInfo();
+                });
+                
+                elements.systemConfigForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    saveSystemConfig();
+                });
+                
+                // Confirmation modal
+                elements.confirmActionBtn.addEventListener('click', confirmAction);
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(e) {
+                    const isSidebar = e.target.closest('#sidebar-wrapper');
+                    const isToggleButton = e.target.closest('#sidebarToggle');
+                    
+                    if (!isSidebar && !isToggleButton && window.innerWidth <= 768) {
+                        elements.sidebarWrapper.classList.remove('toggled');
+                        localStorage.setItem('sidebarState', 'closed');
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        elements.sidebarWrapper.classList.add('toggled');
+                    } else {
+                        const savedState = localStorage.getItem('sidebarState');
+                        if (savedState !== 'open') {
+                            elements.sidebarWrapper.classList.remove('toggled');
+                        }
+                    }
+                });
+            }
+            
+            // Toggle sidebar
+            function toggleSidebar() {
+                elements.sidebarWrapper.classList.toggle('toggled');
+                
+                // Store sidebar state in localStorage
+                if (elements.sidebarWrapper.classList.contains('toggled')) {
+                    localStorage.setItem('sidebarState', 'open');
+                } else {
+                    localStorage.setItem('sidebarState', 'closed');
+                }
+            }
+            
+            // Show section
+            function showSection(sectionId) {
+                elements.sectionContents.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(`${sectionId}-section`).classList.add('active');
+            }
+            
+            // Set active nav link
+            function setActiveNavLink(activeLink) {
+                elements.navLinks.forEach(link => link.classList.remove('active'));
+                activeLink.classList.add('active');
+            }
+            
+            // Navigate form sections
+            function navigateForm(sectionId) {
+                document.querySelector('.form-section.active').classList.remove('active');
+                document.getElementById(sectionId).classList.add('active');
+                
+                currentSection = parseInt(sectionId.replace('section', ''));
+                updateProgressBar();
+            }
+            
+            // Update progress bar
+            function updateProgressBar() {
+                const progressPercentage = (currentSection / totalSections) * 100;
+                const progressBar = document.querySelector('.progress-bar');
+                progressBar.style.width = progressPercentage + '%';
+                progressBar.setAttribute('aria-valuenow', progressPercentage);
+                progressBar.textContent = Math.round(progressPercentage) + '%';
+            }
+            
+            // Handle form submission
+            function submitAdmissionForm(e) {
+                e.preventDefault();
+                
+                // Show success animation
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Success!';
+                submitBtn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = 'Submit Admission';
+                    submitBtn.classList.remove('btn-success');
+                    
+                    // Show alert
+                    showAlert('Admission submitted successfully!', 'success');
+                    
+                    // Reset form
+                    e.target.reset();
+                    document.querySelector('.student-photo').src = 'https://via.placeholder.com/150';
+                    navigateForm('section1');
+                }, 1500);
+            }
+            
+            // Handle photo upload
+            function handlePhotoUpload(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        elements.studentPhotoPreview.src = event.target.result;
+                        
+                        // Add pulse animation
+                        elements.studentPhotoPreview.classList.add('pulse');
+                        setTimeout(() => {
+                            elements.studentPhotoPreview.classList.remove('pulse');
+                        }, 1000);
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            }
+            
+            // View item details
+            function viewItem(type, id) {
+                // In a real app, you would fetch this data from an API
+                let content = '';
+                let title = '';
+                
+                switch(type) {
+                    case 'student':
+                        title = 'Student Details';
+                        content = `
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <img src="https://via.placeholder.com/150" class="student-photo mb-3" width="150" height="150">
+                                </div>
+                                <div class="col-md-8">
+                                    <h4>Rahul Sharma</h4>
+                                    <p><strong>ID:</strong> ${id}</p>
+                                    <p><strong>Class:</strong> 10</p>
+                                    <p><strong>Subjects:</strong> Maths, Science</p>
+                                    <p><strong>Batch:</strong> Morning (7-9 AM)</p>
+                                    <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h5>Contact Information</h5>
+                                    <p><strong>Phone:</strong> +91 9876543210</p>
+                                    <p><strong>Email:</strong> rahul@example.com</p>
+                                    <p><strong>Address:</strong> 123 Street, City</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Parent Information</h5>
+                                    <p><strong>Father:</strong> Mr. Sharma (9876543210)</p>
+                                    <p><strong>Mother:</strong> Mrs. Sharma (9876543211)</p>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'class':
+                        title = 'Class Details';
+                        content = `
+                            <h4>Class 10 - Science</h4>
+                            <p><strong>ID:</strong> ${id}</p>
+                            <p><strong>Subjects:</strong> Maths, Physics, Chemistry</p>
+                            <p><strong>Teacher:</strong> Mr. Sharma</p>
+                            <p><strong>Schedule:</strong> Mon-Fri, 8-10 AM</p>
+                            <p><strong>Students:</strong> 25</p>
+                            <div class="mt-3">
+                                <h5>Student List</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">Rahul Sharma</li>
+                                    <li class="list-group-item">Priya Patel</li>
+                                    <li class="list-group-item">Amit Singh</li>
+                                </ul>
+                            </div>
+                        `;
+                        break;
+                    case 'payment':
+                        title = 'Payment Details';
+                        content = `
+                            <h4>Payment Information</h4>
+                            <p><strong>ID:</strong> ${id}</p>
+                            <p><strong>Student:</strong> Rahul Sharma</p>
+                            <p><strong>Amount:</strong> ₹3,000</p>
+                            <p><strong>Date:</strong> 2023-06-10</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">Paid</span></p>
+                            <p><strong>Payment Method:</strong> Online</p>
+                            <p><strong>Receipt No:</strong> REC${id}</p>
+                        `;
+                        break;
+                    // Add cases for other types as needed
+                }
+                
+                document.querySelector('#viewStudentModal .modal-title').textContent = title;
+                document.getElementById('studentDetailsContent').innerHTML = content;
+                elements.viewStudentModal.show();
+            }
+            
+            // Edit item
+            function editItem(type, id) {
+                showAlert(`Edit ${type} with ID: ${id} functionality will be implemented here`, 'info');
+            }
+            
+            // Delete item
+            function deleteItem(type, id) {
+                showConfirmation('Delete ' + type.charAt(0).toUpperCase() + type.slice(1), 
+                    `Are you sure you want to delete this ${type}? This action cannot be undone.`, 
+                    () => {
+                        showAlert(`${type.charAt(0).toUpperCase() + type.slice(1)} with ID ${id} has been deleted`, 'success');
+                    });
+            }
+            
+            // Export data
+            function exportData(type) {
+                showAlert(`Exporting data as ${type.toUpperCase()} file`, 'info');
+            }
+            
+            // Print data
+            function printData() {
+                showAlert('Printing data...', 'info');
+            }
+            
+            // Generate custom report
+            function generateCustomReport() {
+                const reportType = document.getElementById('reportType').value;
+                const fromDate = document.getElementById('fromDate').value;
+                const toDate = document.getElementById('toDate').value;
+                
+                showAlert(`Generating ${reportType} report from ${fromDate} to ${toDate}`, 'info');
+            }
+            
+            // Save institute info
+            function saveInstituteInfo() {
+                showAlert('Institute information saved successfully', 'success');
+            }
+            
+            // Save system config
+            function saveSystemConfig() {
+                showAlert('System configuration saved successfully', 'success');
+            }
+            
+            // Show confirmation dialog
+            function showConfirmation(title, message, callback) {
+                document.getElementById('confirmationModalTitle').textContent = title;
+                document.getElementById('confirmationModalBody').textContent = message;
+                currentAction = callback;
+                elements.confirmationModal.show();
+            }
+            
+            // Confirm action
+            function confirmAction() {
+                if (currentAction) {
+                    currentAction();
+                }
+                elements.confirmationModal.hide();
+            }
+            
+            // Show alert
+            function showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.role = 'alert';
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                const container = document.querySelector('.container-fluid');
+                container.insertBefore(alertDiv, container.firstChild);
+                
+                // Auto dismiss after 3 seconds
+                setTimeout(() => {
+                    const alert = bootstrap.Alert.getOrCreateInstance(alertDiv);
+                    alert.close();
+                }, 3000);
+            }
+            
+            // Initialize attendance chart
+            function initAttendanceChart() {
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+                attendanceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Attendance Percentage',
+                            data: [85, 79, 88, 91, 76, 89],
+                            backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                            borderColor: 'rgba(78, 115, 223, 1)',
+                            pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                            borderWidth: 2,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 50,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            // Initialize payment chart
+            function initPaymentChart() {
+                const ctx = document.getElementById('paymentChart').getContext('2d');
+                paymentChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Paid", "Pending", "Overdue"],
+                        datasets: [{
+                            data: [75, 15, 10],
+                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        cutout: '80%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Initialize performance chart
+            function initPerformanceChart() {
+                const ctx = document.getElementById('performanceChart').getContext('2d');
+                performanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Class 9", "Class 10", "Class 11", "Class 12"],
+                        datasets: [{
+                            label: "Average Score",
+                            backgroundColor: "#4e73df",
+                            hoverBackgroundColor: "#2e59d9",
+                            borderColor: "#4e73df",
+                            data: [75, 82, 78, 85],
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Initialize revenue chart
+            function initRevenueChart() {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                revenueChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                        datasets: [{
+                            label: "Revenue",
+                            backgroundColor: "#1cc88a",
+                            hoverBackgroundColor: "#17a673",
+                            borderColor: "#1cc88a",
+                            data: [125000, 118000, 132000, 141000, 128000, 135000],
+                        }],
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Public API
+            return {
+                init: init
+            };
+        })();
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', EduCareApp.init);
+    </script>
+</body>
+</html>
