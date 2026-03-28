@@ -1,5 +1,6 @@
-Hello...
-i am Ayush
-i am beginner in web development 
-I have learned —— HTML, CSS & JAVASCRIPT
-and currently I'm learning Python you can also Help me in my Coding Journey 😄.
+Hello! 👋
+We are Sonu and Ayush.
+Both beginners in web development, eager to learn and grow.
+We have learned HTML, CSS, and JavaScript,
+and currently exploring Python together.
+Excited to build projects, share knowledge, and enjoy our coding journey! 😄
